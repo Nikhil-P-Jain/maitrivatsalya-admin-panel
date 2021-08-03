@@ -1,0 +1,15 @@
+.login-block{
+// background-image: url('assets/images/icon_2-2.png');
+float:left;
+width:100%;
+padding : 105px 0;
+}
+.container{background:#fff; border-radius: 30px; box-shadow:15px 20px 0px rgba(0,0,0,0.1);}
+// .carousel-inner{border-radius:30px;}
+.login-sec{padding: 50px 30px; position:relative;}
+.login-sec .copy-text{position:absolute; width:80%; bottom:20px; font-size:13px; text-align:center;}
+.login-sec .copy-text i{color:#FEB58A;}
+.login-sec .copy-text a{color:#e7cb6e;}
+.login-sec h2{margin-bottom:30px; font-weight:800; font-size:30px; color: #DE6262;}
+.login-sec h2:after{content:" "; width:100px; height:5px; background:#FEB58A; display:block; margin-top:20px; border-radius:3px; margin-left:auto;margin-right:auto}
+.btn-login{background: #DE6262; color:#fff; font-weight:600;}

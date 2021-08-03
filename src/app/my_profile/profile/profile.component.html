@@ -1,0 +1,70 @@
+<ng2-toasty [position]="position"></ng2-toasty>
+<div class="row">
+    <div class="col-sm-12">
+        <app-card [title]="'Manage Profile'">
+      <form [formGroup]="userAddEdit" (ngSubmit)="onSubmit()">
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">First Name<span>*</span></label>
+         <div class="col-sm-5">
+            <input class="form-control" formControlName="fname" placeholder="Enter FirstName"
+                  [ngClass]="{'is-invalid': isSubmitted && f.fname.errors}" readonly/>
+                <div *ngIf="isSubmitted && f.fname.errors" class="invalid-feedback">
+                  <div *ngIf="f.fname.errors.required">This feild is required!</div>
+                </div>
+         </div>
+      </div>
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Last Name<span>*</span></label>
+         <div class="col-sm-5">
+            <input class="form-control" formControlName="lname" placeholder="Enter LastName"
+                  [ngClass]="{'is-invalid': isSubmitted && f.lname.errors}" readonly/>
+                <div *ngIf="isSubmitted && f.lname.errors" class="invalid-feedback">
+                  <div *ngIf="f.lname.errors.required">This feild is required!</div>
+                </div>
+         </div>
+      </div>
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Designation<span>*</span></label>
+         <div class="col-sm-5">
+            <input class="form-control" formControlName="designation" placeholder="Your Designation"
+                  [ngClass]="{'is-invalid': isSubmitted && f.designation.errors}" readonly/>
+                <div *ngIf="isSubmitted && f.designation.errors" class="invalid-feedback">
+                  <div *ngIf="f.designation.errors.required">This feild is required!</div>
+                </div>
+         </div>
+      </div>
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Email<span>*</span></label>
+         <div class="col-sm-5">
+            <input class="form-control" formControlName="email" placeholder="Enter Email Id"
+                  [ngClass]="{'is-invalid': isSubmitted && f.email.errors}" readonly/>
+                <div *ngIf="isSubmitted && f.email.errors" class="invalid-feedback">
+                  <div *ngIf="f.email.errors.required">This feild is required!</div>
+                  <div *ngIf="f.email.errors.email">Please Enter Valid email</div>
+                </div>
+         </div>
+      </div>
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Mobile No<span>*</span></label>
+         <div class="col-sm-5">
+            <input class="form-control" formControlName="mobile_no" placeholder="Enter MobileNo"
+            [ngClass]="{'is-invalid': isSubmitted && f.mobile_no.errors}" readonly/>
+          <div *ngIf="isSubmitted && f.mobile_no.errors" class="invalid-feedback">
+            <div *ngIf="f.mobile_no.errors.required">This feild is required!</div>
+          </div>
+         </div>
+      </div>
+      <div class="form-group row">
+         <label class="col-sm-2 col-form-label">Photo Upload</label>
+         <div class="col-sm-5">
+            <img [src]="imgURL" class="img-thumbnail img-responsive" style="height:60%;width:50%;margin-bottom: 10px;">
+            <input type="file" placeholder="Select Image" name="images" (change)="selectFile($event)">
+         </div>
+        </div>
+     </form>
+     <hr style="width:100%">
+       <button class="btn btn-primary" (click)="onSubmit()">Save</button>
+     <button class="btn btn-default btn-outline-default" style="margin-left:5px">Clear</button>
+        </app-card>
+    </div>      
+</div>

@@ -1,0 +1,42 @@
+<section class="login-block" style="background-image: 'assets/images/icon_2-2.png';">
+  <ng2-toasty [position]="position"></ng2-toasty>
+    <div class="container">
+	<div class="row">
+		<div class="col-md-3 login-sec">
+		    <h2 class="text-center">Login Now</h2>
+		    <form class="login-form" [formGroup]="loginfrm" (ngSubmit)="onSubmit()">
+  <div class="form-group">
+    <label>Username</label>
+    <input class="form-control" style="border-radius: 10px;" formControlName="mobileNo" placeholder="Enter Your User Name"
+      [ngClass]="{'is-invalid': isSubmitted && f.mobileNo.errors}" />
+      <div *ngIf="isSubmitted && f.mobileNo.errors" class="invalid-feedback">
+            <div *ngIf="f.mobileNo.errors.required">Please Enter Your Register Username</div>
+      </div>
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input class="form-control" style="border-radius: 10px;" type="password" formControlName="password" placeholder="Password"
+      [ngClass]="{'is-invalid': isSubmitted && f.password.errors}" />
+    <div *ngIf="isSubmitted && f.password.errors" class="invalid-feedback">
+            <div *ngIf="f.password.errors.required">Enter Your Password</div>
+    </div>
+  </div>
+  
+  
+    <div class="form-check">
+    <label class="form-check-label">
+      <input type="checkbox" formControlName="remember">
+      <span class="text-inverse" style="margin-left: 5px;">Remember me</span>
+    </label>
+    <button type="submit" class="btn btn-login float-right" style="border-radius: 30px;">Submit</button>
+  </div>
+  
+</form>
+<!-- <div class="copy-text">Created with <i class="fa fa-heart"></i> by Maitri Trust</div> -->
+		</div>
+		<div class="col-md-6">
+      <img src="assets/images/finalcopy.jpg" alt="Login Image" style="height:450px;border-radius:0 30px 30px 0;width:160%">	
+	</div>
+</div>
+</div>
+</section>

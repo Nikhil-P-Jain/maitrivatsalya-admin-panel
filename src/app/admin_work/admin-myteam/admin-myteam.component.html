@@ -1,0 +1,147 @@
+<ng2-toasty [position]="position"></ng2-toasty>
+<div class="row" *ngIf="display == 'none' ">
+	<div class="col-sm-12">
+    <app-card [title]="'Latest Activities Table'" [classHeader]="true" [blockClass]="'table-border-style'">
+      <div class="table-responsive">
+        <kendo-grid
+        [kendoGridBinding]="gridData"
+         [height]="450" 
+         [columnMenu]="true"
+         [pageSize]="50" 
+         [resizable]="true"
+         [pageable]="{buttonCount:5,pageSizes:[50,100,500,1000]}" 
+         [filterable]="true"
+         [sortable]="true">
+            <ng-template kendoGridToolbarTemplate>
+              <!-- <button type="button"  kendoGridExcelCommand icon="file-excel" *ngIf="gridData != ''">Save as CSV</button> -->
+              <button class="btn btn-primary space" style="margin:3px;border-radius: 5px;"  (click)="saveUser()"><i class="icofont icofont-pencil-alt-1"></i>Activities Details</button>
+            </ng-template>
+            <kendo-grid-column width="200" field="caption" title="Caption"></kendo-grid-column>
+            <kendo-grid-column width="200" field="heading" title="Heading"></kendo-grid-column>
+            <kendo-grid-column width="250" field="image" title="Image">
+              <ng-template kendoGridCellTemplate let-data>
+                <!-- <a href="{{data.image}}" target="/" style="color: blue;text-decoration: underline;">{{data.image}}</a> -->
+                <img src="{{data.image}}" height="150px" width="150px">
+            </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-column width="100" field="description" title="Description">
+              <ng-template kendoGridCellTemplate let-data>
+                <div [innerHTML]="data.description"></div>
+            </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-command-column width="150" title="Actions">
+                <ng-template kendoGridCellTemplate let-data>
+                    <button  (click)="editActivities(data.lid)" class="btn-primary" >Edit</button>
+                    <button class="btn" style="background-color:orangered;margin-left: 5px;padding: 0.1rem 0.5rem !important;color: white;" mwlConfirmationPopover [popoverTitle]="popoverTitle" [popoverMessage]="popoverMessage" placement="left" (confirm)="deleteActivities(data.lid)" (cancel)="cancelClicked = true">Delete</button>
+                </ng-template>
+            </kendo-grid-command-column>
+        </kendo-grid>
+      </div>
+    </app-card>
+  </div>
+  <div *ngIf="loading == true" class="k-i-loading"></div>
+</div>
+
+        <!-- Add New User -->
+        <!-- <div class="modal" tabindex="-500px" role="dialog" style="margin-top: -20px;" [ngStyle]="{'display':display}">
+           <div class="modal-dialog" role="document">
+             <div class="modal-content">
+            <div class="modal-header bg-primary">
+              <h6 class="modal-title">Activities Details</h6>
+                 <button type="button" class="close" style="color: white;" aria-label="Close" (click)="onCloseHandled()"><span aria-hidden="true">&times;</span></button>
+            </div>
+               <div class="modal-body" style="overflow: auto; max-height: 350px;">
+      
+              <form [formGroup]="activityAddEdit">
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Caption<span>*</span></label>
+                  <div class="col-sm-7">
+                    <input kendoTextBox class="form-control" formControlName="caption" placeholder="Enter Caption" [ngClass]="{'is-invalid': isSubmitted && f.caption.errors}"/>
+                    <div *ngIf="isSubmitted && f.caption.errors" class="invalid-feedback">
+                     <div *ngIf="f.caption.errors.required">This field is required</div>
+                   </div>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Heading<span>*</span></label>
+                  <div class="col-sm-7">
+                    <input kendoTextBox class="form-control" formControlName="heading" placeholder="Enter Heading" [ngClass]="{'is-invalid': isSubmitted && f.heading.errors}"/>
+                    <div *ngIf="isSubmitted && f.heading.errors" class="invalid-feedback">
+                     <div *ngIf="f.heading.errors.required">This field is required</div>
+                   </div>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Description<span>*</span></label>
+                  <div class="col-sm-7">
+                    <textarea kendoTextBox class="form-control" formControlName="description" placeholder="Enter Description" [ngClass]="{'is-invalid': isSubmitted && f.description.errors}"></textarea>
+                    <div *ngIf="isSubmitted && f.description.errors" class="invalid-feedback">
+                     <div *ngIf="f.description.errors.required">This field is required</div>
+                   </div>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-4 col-form-label">Image<span>*</span></label>
+                  <div class="col-sm-7">
+                    <input type="file" formControlName="img" (change)="selectFile($event)">
+                    <img [src]="imgURL" class="img-thumbnail img-responsive" style="height:60%;width:50%;margin-top:5px;">
+                  </div>
+                </div>
+          </form>
+            </div>
+               <div class="modal-footer" style="height:38px;">
+                 <button type="button" class="btn btn-primary space"  (click)="onSubmit()" >Submit</button>
+                 <button type="button" class="btn btn-default space" (click)="onCloseHandled()" >Cancel</button>
+               </div>
+             </div>
+           </div>
+          </div> -->
+
+
+          <div class="row" *ngIf="display == 'block' ">
+            <div class="col-sm-12">
+                <app-card [title]="'Letest Activity Detail'">
+                  <form [formGroup]="activityAddEdit">
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label">Caption<span>*</span></label>
+                      <div class="col-sm-7">
+                        <input kendoTextBox class="form-control" formControlName="caption" placeholder="Enter Caption" [ngClass]="{'is-invalid': isSubmitted && f.caption.errors}"/>
+                        <div *ngIf="isSubmitted && f.caption.errors" class="invalid-feedback">
+                         <div *ngIf="f.caption.errors.required">This field is required</div>
+                       </div>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label">Heading<span>*</span></label>
+                      <div class="col-sm-7">
+                        <input kendoTextBox class="form-control" formControlName="heading" placeholder="Enter Heading" [ngClass]="{'is-invalid': isSubmitted && f.heading.errors}"/>
+                        <div *ngIf="isSubmitted && f.heading.errors" class="invalid-feedback">
+                         <div *ngIf="f.heading.errors.required">This field is required</div>
+                       </div>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label">Image<span>*</span></label>
+                      <div class="col-sm-7">
+                        <input type="file" formControlName="img" (change)="selectFile($event)">
+                        <div *ngIf="isdisable == true" style="color: red;">Please wait while Image is being uploaded...</div>
+                        <img [src]="imgURL" class="img-thumbnail img-responsive" style="height:50%;width:20%;" *ngIf="isdisable == false">
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-4 col-form-label">Description<span>*</span></label>
+                      <div class="col-sm-7">
+                        <angular-editor formControlName="description" [config]="editorConfig" [ngClass]="{'is-invalid': isSubmitted && f.description.errors}"></angular-editor>
+                        <!-- <textarea kendoTextBox class="form-control" formControlName="description" placeholder="Enter Description" [ngClass]="{'is-invalid': isSubmitted && f.description.errors}"></textarea> -->
+                        <div *ngIf="isSubmitted && f.description.errors" class="invalid-feedback">
+                         <div *ngIf="f.description.errors.required">This field is required</div>
+                       </div>
+                      </div>
+                    </div>
+              </form>
+             <hr style="width:100%">
+               <button class="btn btn-primary" (click)="onSubmit()"[disabled]="isdisable"><i class="icofont icofont-eye"></i>Save</button>
+             <button class="btn btn-default btn-outline-default" style="margin-left:5px" (click)="onCloseHandled()">Close</button>
+                </app-card>
+            </div>      
+        </div>

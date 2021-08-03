@@ -1,0 +1,91 @@
+<ng2-toasty [position]="position"></ng2-toasty>
+<div class="row">
+	<div class="col-sm-12">
+    <app-card [title]="'Image Table'" [classHeader]="true" [blockClass]="'table-border-style'">
+      <div class="table-responsive">
+        <kendo-grid
+        [kendoGridBinding]="gridData"
+         [height]="450" 
+         [columnMenu]="true"
+         [pageSize]="50" 
+         [resizable]="true"
+         [pageable]="{buttonCount:5,pageSizes:[50,100,500,1000]}" 
+         [filterable]="true"
+         [sortable]="true">
+            <ng-template kendoGridToolbarTemplate>
+              <!-- <button type="button"  kendoGridExcelCommand icon="file-excel" *ngIf="gridData != ''">Save as CSV</button> -->
+              <button class="btn btn-primary space" style="margin:3px;border-radius: 5px;"  (click)="saveUser()"><i class="icofont icofont-pencil-alt-1"></i>Image Details</button>
+            </ng-template>
+            <kendo-grid-column width="150" field="sfname" title="Image Name"></kendo-grid-column>
+            <kendo-grid-column width="200" field="sfimage" title="Image">
+              <ng-template kendoGridCellTemplate let-data>
+                <!-- <a href="{{data.sfimage}}" target="/" style="color: blue;text-decoration: underline;">{{data.sfimage}}</a> -->
+                <img src="{{data.sfimage}}" height="150px" width="150px">
+            </ng-template>
+            </kendo-grid-column>
+            
+            <kendo-grid-column width="100" field="sfcreated_date" title="Image Date">
+            </kendo-grid-column>
+            <kendo-grid-command-column width="150" title="Actions">
+                <ng-template kendoGridCellTemplate let-data>
+                    <button  (click)="editsubfolder(data.sfid)" class="btn-primary"> Edit </button>
+                    <button class="btn" style="background-color:orangered;margin-left: 5px;padding: 0.1rem 0.5rem !important;color: white;" mwlConfirmationPopover [popoverTitle]="popoverTitle" [popoverMessage]="popoverMessage" placement="left" (confirm)="deletesubfolder(data.sfid)" (cancel)="cancelClicked = true">Delete</button>
+                </ng-template>
+            </kendo-grid-command-column>
+        </kendo-grid>
+      </div>
+    </app-card>
+  </div>
+  <div *ngIf="loading == true" class="k-i-loading"></div>
+</div>
+
+<!-- Pop Up -->
+<div class="modal" tabindex="-500px" role="dialog" style="margin-top: -20px;" [ngStyle]="{'display':display}">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-primary">
+        <h6 class="modal-title">Image Details</h6>
+        <button type="button" class="close" style="color: white;" aria-label="Close" (click)="onCloseHandled()"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body" style="overflow: auto; max-height: 350px;">
+        <form [formGroup]="subfolderAddEdit">
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Image Name<span>*</span></label>
+            <div class="col-sm-7">
+              <input kendoTextBox class="form-control" formControlName="sfname" placeholder="Enter Image Name" [ngClass]="{'is-invalid': isSubmitted && f.sfname.errors}"/>
+              <div *ngIf="isSubmitted && f.sfname.errors" class="invalid-feedback">
+                <div *ngIf="f.sfname.errors.required">This field is required</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Gallery<span>*</span></label>
+            <div class="col-sm-7">
+              <select name="select" formControlName="fid"  class="form-control"  [ngClass]="{'is-invalid': isSubmitted && f.fid.errors}">
+                <option value="">Select Gallery</option>
+                <option *ngFor="let data of folder; let i = index" [value]="folder[i].fid">
+                  {{folder[i].fname}}
+                </option>
+              </select>
+              <div *ngIf="isSubmitted && f.fid.errors" class="invalid-feedback">
+                <div *ngIf="f.fid.errors.required">This field is required</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Image<span>*</span></label>
+            <div class="col-sm-7">
+              <input type="file" formControlName="sfimage" (change)="selectFile($event)">
+              <div *ngIf="isdisable == true" style="color: red;">Please wait while Image is being uploaded...</div>
+              <img [src]="imgURL" class="img-thumbnail img-responsive" style="height:50%;width:20%;" *ngIf="isdisable == false">
+            </div>
+          </div>
+        </form>
+      </div>     
+      <div class="modal-footer" style="height:70px;">
+        <button type="button" class="btn btn-primary space"  (click)="onSubmit()" [disabled]="isdisable" >Save</button>
+        <button type="button" class="btn btn-default space" (click)="onCloseHandled()" >Close</button>
+      </div>
+    </div> <!-- /.modal-content!-->
+  </div>  <!-- /.modal-dialog !-->
+</div> <!-- /.modal !-->

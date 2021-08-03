@@ -1,0 +1,78 @@
+<ng2-toasty [position]="position"></ng2-toasty>
+<div class="row" *ngIf="display == 'none' ">
+	<div class="col-sm-12">
+    <app-card [title]="'Testimonial Table'" [classHeader]="true" [blockClass]="'table-border-style'">
+      <div class="table-responsive">
+        <kendo-grid
+        [kendoGridBinding]="gridData"
+         [height]="450" 
+         [columnMenu]="true"
+         [pageSize]="50" 
+         [resizable]="true"
+         [pageable]="{buttonCount:5,pageSizes:[50,100,500,1000]}" 
+         [filterable]="true"
+         [sortable]="true">
+            <ng-template kendoGridToolbarTemplate>
+              <!-- <button type="button"  kendoGridExcelCommand icon="file-excel" *ngIf="gridData != ''">Save as CSV</button> -->
+              <button class="btn btn-primary space" style="margin:3px;border-radius: 5px;"  (click)="saveUser()"><i class="icofont icofont-pencil-alt-1"></i>Testimonial Details</button>
+            </ng-template>
+            <kendo-grid-column width="150" field="name" title="Name"></kendo-grid-column>
+            <kendo-grid-column width="150" field="designation" title="Designation">
+            </kendo-grid-column>
+            <kendo-grid-column width="250" field="recomm" title="Recommedation">
+              <ng-template kendoGridCellTemplate let-data>
+                <div [innerHTML]="data.recomm"></div>
+            </ng-template>
+            </kendo-grid-column>
+            <kendo-grid-command-column width="150" title="Actions">
+                <ng-template kendoGridCellTemplate let-data>
+                    <button  (click)="editAbout(data.aid)" class="btn-primary" >Edit</button>
+                    <button class="btn" style="background-color:orangered;margin-left: 5px;padding: 0.1rem 0.5rem !important;color: white;" mwlConfirmationPopover [popoverTitle]="popoverTitle" [popoverMessage]="popoverMessage" placement="left" (confirm)="deleteAbout(data.aid)" (cancel)="cancelClicked = true">Delete</button>
+                </ng-template>
+            </kendo-grid-command-column>
+        </kendo-grid>
+      </div>
+    </app-card>
+  </div>
+  <div *ngIf="loading == true" class="k-i-loading"></div>
+</div>
+
+<div class="row" *ngIf="display == 'block' ">
+  <div class="col-sm-12">
+      <app-card [title]="'Testimonial Detail'">
+        <form [formGroup]="aboutAddEdit">
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Name<span>*</span></label>
+            <div class="col-sm-7">
+              <input kendoTextBox class="form-control" formControlName="name" placeholder="Enter Name" [ngClass]="{'is-invalid': isSubmitted && f.name.errors}"/>
+              <div *ngIf="isSubmitted && f.name.errors" class="invalid-feedback">
+                <div *ngIf="f.name.errors.required">This field is required</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Designation<span>*</span></label>
+            <div class="col-sm-7">
+              <input kendoTextBox class="form-control" formControlName="designation" placeholder="Enter Designation" [ngClass]="{'is-invalid': isSubmitted && f.designation.errors}"/>
+              <div *ngIf="isSubmitted && f.designation.errors" class="invalid-feedback">
+                <div *ngIf="f.designation.errors.required">This field is required</div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-4 col-form-label">Recommendation<span>*</span></label>
+            <div class="col-sm-7">
+              <angular-editor formControlName="recomm" [config]="editorConfig" [ngClass]="{'is-invalid': isSubmitted && f.recomm.errors}"></angular-editor>
+              <!-- <textarea kendoTextBox class="form-control" formControlName="recomm" placeholder="Enter Reommedation" [ngClass]="{'is-invalid': isSubmitted && f.recomm.errors}"></textarea> -->
+              <div *ngIf="isSubmitted && f.recomm.errors" class="invalid-feedback">
+                <div *ngIf="f.recomm.errors.required">This field is required</div>
+              </div>
+            </div>
+          </div>
+    </form>
+    <hr style="width:100%">
+      <button class="btn btn-primary" (click)="onSubmit()"><i class="icofont icofont-eye"></i>Save</button>
+    <button class="btn btn-default btn-outline-default" style="margin-left:5px" (click)="onCloseHandled()">Close</button>
+      </app-card>
+  </div>      
+</div>

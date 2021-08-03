@@ -1,0 +1,226 @@
+import { Component, OnInit } from '@angular/core';
+import {subfolderservice} from 'src/app/service/subfolder.service';
+import { FormGroup, FormBuilder, Validators ,ValidatorFn, AbstractControl,ValidationErrors,FormControl} from '@angular/forms';
+import {ToastData, ToastOptions, ToastyService} from 'ng2-toasty';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
+const URL = 'http://api.maitrivatsalya.org/api/upload/file';
+//const URL = 'http://localhost:3000/api/upload/file';
+
+@Component({
+  selector: 'app-subfolder',
+  templateUrl: './subfolder.component.html',
+  styleUrls: ['./subfolder.component.css']
+})
+export class SubfolderComponent implements OnInit {
+  uploadSaveUrl = 'saveUrl';
+  uploadRemoveUrl = 'removeUrl';
+  //for toast show
+  position = 'top-center';
+  title: string;
+  msg: string;
+  showClose = true;
+  timeout = 5000;
+  theme = 'bootstrap';
+  type = 'default';
+  closeOther = false;
+
+  //show delete confirmation message
+  public popoverTitle:string="Image Delete Confirmation";
+  public popoverMessage:string="Are you Sure that you want to Delete?";
+  confirmClicked = false;
+  cancelClicked = false;
+
+  display='none';
+  import ="none";
+  public gridData: any = [];
+  resp:any;
+  subfolderAddEdit: FormGroup;
+  isSubmitted = false;
+  uniqueId:any;
+
+  rep:any=[];
+  message:any;
+
+  loading:any;
+
+  // ress:any;
+  // data1:any;
+  // sfid:any;
+
+  imgURL:any;
+  images:any;
+  pic:any;
+
+  upres:any;
+  upresp:any;
+
+  // sfid:any;
+  folder:any;
+  fresp:any;
+  isdisable:boolean;
+
+
+constructor(private listService:subfolderservice,
+         public http:HttpClient,
+         private formBuilder: FormBuilder,
+        private toastyService: ToastyService) { }
+
+ngOnInit() {
+this.isSubmitted = false;
+//this.sfid=localStorage.getItem("user_id");
+this.listService.getsubfolder().subscribe(res=>{
+ this.resp = res;
+ this.loading=false;
+ this.gridData = this.resp.data.results;
+ console.log("Getting Data :-", this.gridData);
+});
+
+this.listService.getfolder().subscribe(res=>{
+  this.fresp = res;
+  this.folder=this.fresp.data.results;
+  console.log("Getting Data From Folder :-",this.folder)
+  }); 
+  this.subfolderAddEdit=this.formBuilder.group({
+    sfname:['',[Validators.required]],
+    fid:['',[Validators.required]],
+    sfimage:[''],
+    })
+}
+
+saveUser(){
+ this.display= 'block';
+}
+
+onCloseHandled(){
+ this.display='none';
+ this.ngOnInit();
+}
+
+async selectFile(event){
+  this.isdisable=true;
+  if (event.target.files && event.target.files[0]) {
+    var reader = new FileReader();
+    reader.readAsDataURL(event.target.files[0]); // read file as data url
+    reader.onload = (event:any) => {
+      if(event != undefined){
+        this.imgURL = event.target.result;
+      }
+    }
+  }
+ 
+  if(event.target.files.length >0){
+    const file = event.target.files[0];
+    this.images = file;
+    
+    const formData = new FormData();
+    formData.append('file', this.images);
+ 
+    this.http.post<any>(URL, formData).subscribe(res=>{
+      this.pic = "http://api.maitrivatsalya.org/"+res.file.path;
+      //this.pic = "http://localhost:3000/"+res.file.path;
+      this.isdisable=false;
+      console.log("Getting Image :-", this.pic);
+    });
+  }
+ }
+ 
+editsubfolder(id:any){
+ this.uniqueId=id;
+ console.log("Getting update id :-", id);
+   this.listService.getsubfolderbyid(id).subscribe(res=>{
+       this.upres=res;
+       this.upresp=this.upres.data.results[0];
+       console.log("Getting response :-", this.upresp);
+       this.display='block';
+       this.pic=this.upresp.sfimage;
+       this.imgURL=this.upresp.sfimage;
+       this.isdisable=false;
+       this.subfolderAddEdit.reset({
+         "sfname":this.upresp.sfname,
+         "fid":this.upresp.fid
+       })
+   })
+}
+
+addToast(msgg:any,type:any) {
+ // this.position = this.position;
+ const toastOptions: ToastOptions = {
+   title: "Maitri Trust",
+   msg: msgg,
+   showClose: this.showClose,
+   timeout: this.timeout,
+   theme: this.theme,
+   onAdd: (toast: ToastData) => {
+     // console.log('Toast ' + toast.id + ' has been added!');
+   },
+   onRemove: (toast: ToastData) => {
+     // console.log('Toast ' + toast.id + ' has been added removed!');
+   }
+ }
+ switch (type) {
+   case 'success': this.toastyService.success(toastOptions); break;
+   case 'error': this.toastyService.error(toastOptions); break;
+ }
+ // this.toastyService.success(toastOptions);
+}
+
+deletesubfolder(id:any){
+ this.loading=true;
+ this.listService.deletesubfolder(id).subscribe(res=>{
+   this.addToast("Image Deleted Successfully!!",'success');
+   this.ngOnInit();
+   this.loading=false;
+ })
+}
+
+get f() { return this.subfolderAddEdit.controls; }
+
+async onSubmit() {
+ this.isSubmitted = true;
+ console.log("Getting FormData :-",this.subfolderAddEdit.value)
+ if (this.subfolderAddEdit.invalid) {
+   return;
+ }else{
+       if(!this.uniqueId){
+         var body={
+           "sfname":this.subfolderAddEdit.value.sfname,
+           "fid":this.subfolderAddEdit.value.fid,                
+           "sfimage":this.pic
+          }
+         this.listService.createsubfolder(body).subscribe(res=>{
+           console.log(res);
+          this.rep = res;
+             this.addToast('New Image Created Successfully','success');
+               this.onCloseHandled();
+               this.imgURL="";
+               // this.ngOnInit();
+         },err=>{
+           this.addToast("New Image Not Added! Please Try Again!!",'error');
+           this.onCloseHandled();
+           // this.ngOnInit();
+         });
+       }
+       else{
+         var bo={
+           "sfid": this.uniqueId,
+           "sfname":this.subfolderAddEdit.value.sfname,
+           "fid":this.subfolderAddEdit.value.fid,
+           "sfimage":this.pic
+          }
+          
+         this.listService.updatesubfolder(bo).subscribe(res=>{
+           this.rep = res;
+           // this.message = this.rep.message;
+             this.addToast(this.rep.message,'success');
+             this.onCloseHandled();
+             this.ngOnInit();
+             this.uniqueId='';
+         },err=>{
+           this.addToast("Image Not Updated!!",'error');
+         });
+       }     
+     
+ }
+}
+}
